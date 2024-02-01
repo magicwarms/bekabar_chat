@@ -20,7 +20,7 @@ COPY --from=build-stage /app/bekabar-chat .
 
 COPY .env ./
 
-EXPOSE 9002
+EXPOSE 9005
 
 CMD ["./bekabar-chat"]
 
