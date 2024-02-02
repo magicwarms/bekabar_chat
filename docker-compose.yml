@@ -4,4 +4,4 @@ services:
   bekabar-chat-be:
     build: .
     ports:
-      - "8000:9005"
+      - "9005:9005"
