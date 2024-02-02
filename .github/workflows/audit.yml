@@ -1,4 +1,4 @@
-name: Audit
+name: Audit & Deploy
 
 on:
   push:
@@ -41,3 +41,21 @@ jobs:
 
     - name: Run tests
       run: go test -race -vet=off ./...
+  
+  deploy:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Deploy using SSH
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USERNAME }}
+          password: ${{ secrets.SSH_PASSWORD }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
+          script: |
+            cd ~/bekabar_chat
+            sudo docker compose down
+            git pull origin main
+            git status
+            sudo docker compose up -d
