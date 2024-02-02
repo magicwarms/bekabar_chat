@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+  bekabar-chat-be:
+    build: .
+    ports:
+      - "8000:9005"
