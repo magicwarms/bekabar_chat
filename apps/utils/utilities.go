@@ -77,6 +77,8 @@ func AppResponse(w http.ResponseWriter, code int, data interface{}) {
 	jsonResponse, _ := json.Marshal(response)
 
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.Header().Set("Access-Control-Allow-Origin", "*")
+
 	w.WriteHeader(code)
 	w.Write(jsonResponse)
 }

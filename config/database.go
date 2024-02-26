@@ -1,7 +1,6 @@
 package config
 
 import (
-	"bekabar_chat/apps/user/model"
 	"fmt"
 	"log"
 	"os"
@@ -29,26 +28,27 @@ func InitDatabase() *gorm.DB {
 	}
 	dsn := "host=" + os.Getenv("DB_HOST") + " user=" + os.Getenv("DB_USERNAME") + " password=" + os.Getenv("DB_PASSWORD") + " dbname=" + os.Getenv("DB_DATABASE") + " port=" + os.Getenv("DB_PORT") + " " + sslMode + " TimeZone=" + os.Getenv("TZ")
 
-	var logLvl logger.LogLevel
-	if appEnv == "production" {
-		logLvl = logger.Silent
-	} else if appEnv == "staging" {
-		logLvl = logger.Warn
-	} else {
-		logLvl = logger.Info
-		// logLvl = logger.Warn
-	}
-
-	dbLogger := logger.New(
-		log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
-		logger.Config{
-			SlowThreshold: time.Second, // Slow SQL threshold
-			LogLevel:      logLvl,      // Log level
-			Colorful:      true,        // Enable color
-		},
-	)
-
 	dbConnOnce.Do(func() {
+
+		var logLvl logger.LogLevel
+		if appEnv == "production" {
+			logLvl = logger.Silent
+		} else if appEnv == "staging" {
+			logLvl = logger.Warn
+		} else {
+			logLvl = logger.Info
+			// logLvl = logger.Warn
+		}
+
+		dbLogger := logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+			logger.Config{
+				SlowThreshold: time.Second, // Slow SQL threshold
+				LogLevel:      logLvl,      // Log level
+				Colorful:      true,        // Enable color
+			},
+		)
+
 		DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{
 			Logger:      dbLogger,
 			PrepareStmt: true,
@@ -85,8 +85,6 @@ func InitDatabase() *gorm.DB {
 
 		fmt.Println("⚡️DB Connection opened!")
 	})
-
-	DB.AutoMigrate(&model.UserModel{})
 
 	return DB
 }

@@ -1,16 +1,15 @@
 package router
 
 import (
+	"bekabar_chat/apps/user"
 	"bekabar_chat/apps/utils"
+	"bekabar_chat/structs"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
-
-	"bekabar_chat/apps/user"
 )
 
-func Dispatch(DBConnection *gorm.DB) *mux.Router {
+func Dispatch(services *structs.MyConnectionService) *mux.Router {
 	// creates a new instance of a mux router
 	myRouter := mux.NewRouter().StrictSlash(true)
 	// replace http.HandleFunc with myRouter.HandleFunc
@@ -18,7 +17,8 @@ func Dispatch(DBConnection *gorm.DB) *mux.Router {
 		utils.AppResponse(w, http.StatusOK, "Hello World")
 	}).Methods("GET")
 
-	myRouter.Handle("/register", user.RegisterUser(DBConnection)).Methods("POST")
+	myRouter.Handle("/register", user.RegisterUser(services)).Methods(http.MethodPost, http.MethodOptions)
+	myRouter.Use(mux.CORSMethodMiddleware(myRouter))
 
 	return myRouter
 }

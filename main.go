@@ -3,6 +3,7 @@ package main
 import (
 	"bekabar_chat/config"
 	"bekabar_chat/router"
+	"bekabar_chat/structs"
 	"context"
 	"flag"
 	"fmt"
@@ -10,7 +11,15 @@ import (
 	"os"
 	"os/signal"
 	"time"
+
+	"gorm.io/gorm"
 )
+
+func MyNewService(
+	DBConnection *gorm.DB,
+) *structs.MyConnectionService {
+	return &structs.MyConnectionService{DB: DBConnection}
+}
 
 func main() {
 	config.LoadEnvVariable()
@@ -24,8 +33,10 @@ func main() {
 	// set up DB connection here
 	DBConnection := config.InitDatabase()
 
+	services := MyNewService(DBConnection)
+
 	// all app routes here
-	appRoute := router.Dispatch(DBConnection)
+	appRoute := router.Dispatch(services)
 
 	srv := &http.Server{
 		Addr: "localhost:" + port,
