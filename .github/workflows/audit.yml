@@ -43,6 +43,7 @@ jobs:
       run: go test -race -vet=off ./...
   
   deploy:
+    if: false
     runs-on: ubuntu-20.04
     needs: audit
     steps:

@@ -18,6 +18,7 @@ func Dispatch(services *structs.MyConnectionService) *mux.Router {
 	}).Methods("GET")
 
 	myRouter.Handle("/register", user.RegisterUser(services)).Methods(http.MethodPost, http.MethodOptions)
+
 	myRouter.Use(mux.CORSMethodMiddleware(myRouter))
 
 	return myRouter
