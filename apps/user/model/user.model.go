@@ -11,12 +11,12 @@ import (
 
 // UserModel Constructs your UserModel under entities
 type UserModel struct {
-	ID        string `gorm:"primaryKey" json:"id"`
-	Username  string `gorm:"not null;uniqueIndex;size:70" json:"username"`
-	Email     string `gorm:"not null;uniqueIndex;size:50" json:"email"`
-	Password  string `gorm:"not null" json:"-"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID        string         `gorm:"primaryKey" json:"id"`
+	Username  string         `gorm:"not null;uniqueIndex;size:70" json:"username"`
+	Email     string         `gorm:"not null;uniqueIndex;size:50" json:"email"`
+	Password  string         `gorm:"not null" json:"-"`
+	CreatedAt time.Time      `json:"created_at,omitempty"`
+	UpdatedAt time.Time      `json:"updated_at,omitempty"`
 	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
 }
 
@@ -36,7 +36,7 @@ func (user *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
 	user.Password = string(hashedPassword)
 	generateUuid, errGenerateUuid := uuid.NewV7()
 	if errGenerateUuid != nil {
-		fmt.Println("Error generate uuid", errGenerateUuid)
+		fmt.Println("error generate uuid", errGenerateUuid)
 		return errGenerateUuid
 	}
 	user.ID = generateUuid.String()

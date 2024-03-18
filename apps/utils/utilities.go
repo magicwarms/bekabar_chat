@@ -13,10 +13,10 @@ import (
 type Response struct {
 	Success bool         `json:"success"`
 	Data    interface{}  `json:"data"`
-	Error   *errorDetail `json:"error,omitempty"`
+	Error   *ErrorDetail `json:"error,omitempty"`
 }
 
-type errorDetail struct {
+type ErrorDetail struct {
 	Code    int    `json:"code,omitempty"`
 	Message string `json:"message,omitempty"`
 }
@@ -63,12 +63,13 @@ func FileTypeValidation(filetype string) bool {
 // AppResponse is for response config show to Frontend side
 func AppResponse(w http.ResponseWriter, code int, data interface{}) {
 	response := Response{
-		Success: code <= 299,
+		Success: code <= 400,
 		Data:    data,
-		Error:   &errorDetail{},
+		Error:   &ErrorDetail{},
 	}
 	if !response.Success {
-		response.Error = &errorDetail{
+		response.Data = nil
+		response.Error = &ErrorDetail{
 			Code:    code,
 			Message: fmt.Sprintf("%v", data),
 		}

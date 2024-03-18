@@ -1,31 +1,51 @@
 package user
 
 import (
+	"bekabar_chat/apps/user/entity"
 	"bekabar_chat/apps/user/model"
-	"bekabar_chat/apps/utils"
-	"bekabar_chat/structs"
-	"net/http"
 
 	"gorm.io/gorm"
 )
 
-func RegisterUser(connection *structs.MyConnectionService) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var user = model.UserModel{
-			Username: r.FormValue("username"),
-			Email:    r.FormValue("email"),
-			Password: r.FormValue("password"),
+type UserService struct {
+	DB *gorm.DB
+}
+
+// NewService is used to create a single instance of the service
+func NewUserService(connection *gorm.DB) *UserService {
+	return &UserService{
+		DB: connection,
+	}
+}
+
+func (srv *UserService) StoreUser(user *entity.AddUserRequestDTO) error {
+
+	// Handle errors directly from the transaction
+	if err := srv.DB.Transaction(func(tx *gorm.DB) error {
+
+		storeUser := model.UserModel{
+			Email:    user.Email,
+			Username: user.Username,
+			Password: user.Password,
 		}
 
-		// Handle errors directly from the transaction
-		if err := connection.DB.Transaction(func(tx *gorm.DB) error {
-			return tx.Create(&user).Error
-		}); err != nil {
-			utils.AppResponse(w, http.StatusInternalServerError, err.Error())
-			return
-		}
+		return tx.Create(&storeUser).Error
+	}); err != nil {
+		return err
+	}
 
-		// Continue with normal response if no errors
-		utils.AppResponse(w, http.StatusOK, user)
-	})
+	return nil
+}
+
+func (srv *UserService) FetchAllUser() ([]*model.UserModel, error) {
+
+	var users []*model.UserModel
+
+	results := srv.DB.Select("id", "email", "username", "created_at", "updated_at").Find(&users)
+
+	if results.Error != nil {
+		return nil, results.Error
+	}
+
+	return users, nil
 }
