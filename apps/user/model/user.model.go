@@ -2,10 +2,8 @@ package model
 
 import (
 	"bekabar_chat/apps/utils"
-	"fmt"
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -34,12 +32,6 @@ func (user *UserModel) BeforeCreate(tx *gorm.DB) (err error) {
 	}
 	// set password before create
 	user.Password = string(hashedPassword)
-	generateUuid, errGenerateUuid := uuid.NewV7()
-	if errGenerateUuid != nil {
-		fmt.Println("error generate uuid", errGenerateUuid)
-		return errGenerateUuid
-	}
-	user.ID = generateUuid.String()
 	return
 }
 

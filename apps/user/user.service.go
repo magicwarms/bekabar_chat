@@ -24,6 +24,7 @@ func (srv *UserService) StoreUser(user *entity.AddUserRequestDTO) error {
 	if err := srv.DB.Transaction(func(tx *gorm.DB) error {
 
 		storeUser := model.UserModel{
+			ID:       user.ID,
 			Email:    user.Email,
 			Username: user.Username,
 			Password: user.Password,
@@ -38,7 +39,6 @@ func (srv *UserService) StoreUser(user *entity.AddUserRequestDTO) error {
 }
 
 func (srv *UserService) FetchAllUser() ([]*model.UserModel, error) {
-
 	var users []*model.UserModel
 
 	results := srv.DB.Select("id", "email", "username", "created_at", "updated_at").Find(&users)

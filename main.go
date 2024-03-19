@@ -11,17 +11,16 @@ import (
 func main() {
 	config.LoadEnvVariable()
 
-	if err := runApplication(os.Getenv("APPLICATION_ENV")); err != nil {
+	if err := RunApplication(os.Getenv("APPLICATION_ENV")); err != nil {
 		log.Fatal(err)
 	}
 
 }
 
-func runApplication(env string) error {
+func RunApplication(env string) error {
 	buildContainers := di.BuildContainer(env)
 
 	return buildContainers.Invoke(func(apiServer *server.APIServer) error {
 		return apiServer.Start()
 	})
-
 }
