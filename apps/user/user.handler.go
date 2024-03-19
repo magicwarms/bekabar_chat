@@ -3,10 +3,7 @@ package user
 import (
 	"bekabar_chat/apps/user/entity"
 	"bekabar_chat/apps/utils"
-	"fmt"
 	"net/http"
-
-	"github.com/google/uuid"
 )
 
 type UserHandler struct {
@@ -34,15 +31,6 @@ func (user *UserHandler) RegisterUser() http.Handler {
 			utils.AppResponse(w, http.StatusUnprocessableEntity, validationErr.Message)
 			return
 		}
-
-		generateUuid, errGenerateUuid := uuid.NewV7()
-		if errGenerateUuid != nil {
-			fmt.Println("error generate uuid", errGenerateUuid)
-			utils.AppResponse(w, http.StatusInternalServerError, errGenerateUuid)
-			return
-		}
-
-		userDTO.ID = generateUuid.String()
 
 		storeUserData := user.userService.StoreUser(userDTO)
 

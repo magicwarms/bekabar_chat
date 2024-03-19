@@ -22,14 +22,11 @@ func (srv *UserService) StoreUser(user *entity.AddUserRequestDTO) error {
 
 	// Handle errors directly from the transaction
 	if err := srv.DB.Transaction(func(tx *gorm.DB) error {
-
 		storeUser := model.UserModel{
-			ID:       user.ID,
 			Email:    user.Email,
 			Username: user.Username,
 			Password: user.Password,
 		}
-
 		return tx.Create(&storeUser).Error
 	}); err != nil {
 		return err
